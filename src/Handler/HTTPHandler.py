@@ -1,0 +1,42 @@
+from fastapi import Request, Response
+from src.Controller.Controller import Controller
+
+class HTTPHandler:
+    def __init__(self):
+        self.controller = Controller() 
+    
+    async def usuarioHandler(self, request: Request, response: Response):
+        data = await request.json()
+        email = data["email"]
+        password = data["password"]
+        return self.controller.get_usuario(email, password)
+    
+    def categoriasHandler(self, request: Request, response: Response):
+        return self.controller.get_categorias()
+    
+    def bazarHandler(self, categorias: str, response: Response):
+        return self.controller.get_bazar(categorias)
+    
+    async def solicitudHandler(self, request: Request, response: Response):
+        data = await request.json()
+        Lista_fotos = data["Lista_fotos"]
+        UsuarioID = data["usuarioid"]
+        BazarID = data["bazarid"]
+        descripcion = data["descripcion"]
+        categoriaID = data["categoria"]
+        return self.controller.crear_solicitud(Lista_fotos, UsuarioID, BazarID, descripcion, categoriaID)
+    
+    async def historialHandler(self, request: Request, response: Response):
+        data = await request.json()
+        name = data["nombre"]
+        return self.controller.historial_donaciones(name)
+    
+    def pendientesHandler(self, request: Request, response: Response):
+        return self.controller.solicitudes_pendientes()
+    
+    async def estadoHandler(self, request: Request, response: Response):
+        data = await request.json()
+        folio = data["folio"]
+        decision = data["decicion"]
+        self.controller.cambiar_estado_solicitud(folio, decision)
+        return {"success": True}
