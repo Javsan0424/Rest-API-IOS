@@ -24,6 +24,10 @@ app.add_middleware(
 async def usuario_route(request: Request, response: Response):
     return await handler.usuarioHandler(request, response)
 
+@router.put("/crearusuario")
+async def crearusuario_route(request: Request, response: Response):
+    return await handler.crearUsuario(request, response)
+
 @router.get("/categorias")
 def categorias_route(request: Request, response: Response):
     return handler.categoriasHandler(request, response)

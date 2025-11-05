@@ -8,8 +8,15 @@ class HTTPHandler:
     async def usuarioHandler(self, request: Request, response: Response):
         data = await request.json()
         email = data["email"]
-        password = data["password"]
+        password = data["contraseña"]
         return self.controller.get_usuario(email, password)
+    
+    async def crearUsuario(self, request: Request, response: Response):
+        data = await request.json()
+        nombre = data["nombre"]
+        email = data["email"]
+        contraseña = data["contraseña"]
+        return self.controller.crear_usuario(nombre,email,contraseña)
     
     def categoriasHandler(self, request: Request, response: Response):
         return self.controller.get_categorias()

@@ -20,6 +20,9 @@ class Controller:
             #Logged failed
             return False
         
+    def crear_usuario(self, nombre,email,contraseña, rol = "cliente"):
+        self.supabase.table("usuario").insert({"nombre":nombre,"email":email,"contraseña":contraseña, "rol":rol}).execute()
+        
     def get_categorias(self):
         response = self.supabase.table("categorias").select("*").execute()
         return response.data 
@@ -58,3 +61,5 @@ class Controller:
     def cambiar_estado_solicitud(self, folio, decision):
         self.supabase.table("donaciones").update({"estado": decision}).eq("folio", folio).execute()
         return {"status": "updated"}
+    
+
