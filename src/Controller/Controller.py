@@ -28,7 +28,7 @@ class Controller:
         return response.data 
     
     def get_bazar(self,categorias ): 
-        response = self.supabase.rpc("get_bazar_by_categoria", {"cat_name": categorias}).select("nombre_bazar, ubicacion").execute()
+        response = self.supabase.rpc("get_bazar_by_categoria", {"cat_name": categorias}).select("id_bazar,nombre_bazar, ubicacion").execute()
         return response.data
     
     def crear_solicitud(self, Lista_fotos, UsuarioID, BazarID, descripcion, categoriaID, Estado='En proceso'):
@@ -62,4 +62,5 @@ class Controller:
         self.supabase.table("donaciones").update({"estado": decision}).eq("folio", folio).execute()
         return {"status": "updated"}
     
-
+database = Controller()
+print(database.get_bazar("Ropa"))
