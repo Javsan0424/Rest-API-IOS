@@ -52,8 +52,14 @@ def pendientes_route(request: Request, response: Response):
 async def estado_route(request: Request, response: Response):
     return await handler.estadoHandler(request, response)
 
+@router.post("/aceptado")
+async def aceptado_route(request: Request, response: Response):
+    return await handler.SolicitudesAceptadasHandler(request, response)
+
 app.include_router(router)
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+aceptado_route()

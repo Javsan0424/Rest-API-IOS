@@ -61,6 +61,7 @@ class Controller:
     def cambiar_estado_solicitud(self, folio, decision):
         self.supabase.table("donaciones").update({"estado": decision}).eq("folio", folio).execute()
         return {"status": "updated"}
-    
-database = Controller()
-print(database.get_bazar("Ropa"))
+
+    def solicitudes_aceptadas(self):
+        response = self.supabase.table("donaciones").select("*").eq("estado","Aceptado").execute()
+        return response.data

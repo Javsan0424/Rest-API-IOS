@@ -47,3 +47,6 @@ class HTTPHandler:
         decision = data["decicion"]
         self.controller.cambiar_estado_solicitud(folio, decision)
         return {"success": True}
+    
+    def SolicitudesAceptadasHandler(self, request: Request, response: Response):
+        return self.controller.solicitudes_aceptadas()
