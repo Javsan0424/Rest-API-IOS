@@ -12,11 +12,24 @@ class HTTPHandler:
         return self.controller.get_usuario(email, password)
     
     async def crearUsuario(self, request: Request, response: Response):
-        data = await request.json()
-        nombre = data["nombre"]
-        email = data["email"]
-        contraseña = data["contraseña"]
-        return self.controller.crear_usuario(nombre,email,contraseña)
+        try:
+            data = await request.json()
+
+            nombre = data["nombre"]
+            email = data["email"]
+            contraseña = data["contraseña"]
+
+            self.controller.crear_usuario(nombre, email, contraseña)
+
+            response.status_code = 201
+            return {
+                "success": True,
+                "message": "Usuario creado correctamente"
+            }
+
+        except Exception as e:
+            response.status_code = 500
+            return {"success": False, "error": str(e)}
     
     def categoriasHandler(self, request: Request, response: Response):
         return self.controller.get_categorias()

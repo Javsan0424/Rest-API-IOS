@@ -61,5 +61,3 @@ app.include_router(router)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-aceptado_route()

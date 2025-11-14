@@ -65,3 +65,7 @@ class Controller:
     def solicitudes_aceptadas(self):
         response = self.supabase.table("donaciones").select("*").eq("estado","Aceptado").execute()
         return response.data
+    
+controller = Controller()
+
+controller.solicitudes_aceptadas()
