@@ -14,11 +14,22 @@ class Controller:
         response = self.supabase.table("usuario").select("*").eq("email", email).eq("contraseña", contraseña).execute()
         
         if response.data:
-            #Logged in
-            return True
+            user = response.data[0]  
+            
+            return {
+                "success": True,
+                "usuario": {
+                    "id": user["id"],
+                    "nombre": user["nombre"],
+                    "email": user["email"],
+                    "rol": user["rol"]
+                }
+            }
         else:
-            #Logged failed
-            return False
+            return {
+                "success": False,
+                "message": "Usuario o contraseña incorrectos"
+            }
         
     def crear_usuario(self, nombre,email,contraseña, rol = "cliente"):
         self.supabase.table("usuario").insert({"nombre":nombre,"email":email,"contraseña":contraseña, "rol":rol}).execute()
@@ -65,7 +76,3 @@ class Controller:
     def solicitudes_aceptadas(self):
         response = self.supabase.table("donaciones").select("*").eq("estado","Aceptado").execute()
         return response.data
-    
-controller = Controller()
-
-controller.solicitudes_aceptadas()
