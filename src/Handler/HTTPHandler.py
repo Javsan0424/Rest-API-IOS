@@ -5,11 +5,28 @@ class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
 
-    async def usuarioHandler(self, request:Request, response: Response):
-        data = await request.json()
-        email = data["email"]
-        password = data["contraseña"]
-        return self.controller.get_usuario(email, password)
+    async def usuarioHandler(self, request: Request, response: Response):
+        try:
+            data = await request.json()
+            email = data["email"]
+            password = data["contraseña"]
+        except Exception as e:
+            # JSON malo o llaves faltantes
+            raise HTTPException(status_code=400, detail=f"Body inválido: {e}")
+
+        try:
+            usuario = self.controller.get_usuario(email, password)
+            # Asegúrate que `usuario` sea un dict o algo serializable
+            if not usuario:
+                # ejemplo: credenciales incorrectas
+                raise HTTPException(status_code=401, detail="Credenciales inválidas")
+            return usuario
+        except HTTPException:
+            # Re-lanzar errores controlados
+            raise
+        except Exception as e:
+            # Cualquier otra cosa (DB, Supabase, etc.)
+            raise HTTPException(status_code=500, detail=f"Error interno: {e}")
     
     async def crearUsuario(self, request: Request, response: Response):
         try:
@@ -56,10 +73,10 @@ class HTTPHandler:
     async def estadoHandler(self, request: Request, response: Response):
         data = await request.json()
         folio = data["folio"]
-        decision = data["decicion"]
+        decision = data["decision"]
         self.controller.cambiar_estado_solicitud(folio, decision)
         return {"success": True}
     
-    def SolicitudesAceptadasHandler(self, request: Request, response: Response):
+    async def SolicitudesAceptadasHandler(self, request: Request, response: Response):
         return self.controller.solicitudes_aceptadas()
     
