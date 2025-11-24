@@ -5,7 +5,8 @@ class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
 
-    async def usuarioHandler(self, data: dict, response: Response):
+    async def usuarioHandler(self, request:Request, response: Response):
+        data = await request.json()
         email = data["email"]
         password = data["contraseña"]
         return self.controller.get_usuario(email, password)

@@ -36,9 +36,9 @@ class CrearSolicitudBody(BaseModel):
 # Rutas
 # ⛔ login no debe ser GET si quieres mandar JSON, cámbialo a POST
 @router.post("/usuario")
-async def usuario_route(body: LoginBody, response: Response):
+async def usuario_route(request: Request, response: Response):
     # body ya viene validado con .email y .contraseña
-    return await handler.usuarioHandler(body.model_dump(), response)
+    return await handler.usuarioHandler(request, response)
 
 @router.put("/crearusuario")
 async def crearusuario_route(request: Request, response: Response):
