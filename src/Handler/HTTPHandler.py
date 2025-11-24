@@ -5,25 +5,10 @@ class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
 
-    async def usuarioHandler(self, request: Request, response: Response):
-        try:
-            data = await request.json()
-            email = data.get("email")
-            password = data.get("contraseña")
-
-            if not email or not password:
-                response.status_code = 400
-                return {"success": False, "message": "Faltan datos"}
-
-            result = await self.controller.get_usuario(email, password)
-            
-            if not result["success"]:
-                response.status_code = 401 
-            return result
-
-        except Exception as e:
-            response.status_code = 500
-            return {"success": False, "message": str(e)}
+    async def usuarioHandler(self, data: dict, response: Response):
+        email = data["email"]
+        password = data["contraseña"]
+        return self.controller.get_usuario(email, password)
     
     async def crearUsuario(self, request: Request, response: Response):
         try:
@@ -50,9 +35,8 @@ class HTTPHandler:
     
     def bazarHandler(self, categorias: str, response: Response):
         return self.controller.get_bazar(categorias)
-    
-    async def solicitudHandler(self, request: Request, response: Response):
-        data = await request.json()
+
+    async def solicitudHandler(self, data: dict, response: Response):
         Lista_fotos = data["Lista_fotos"]
         UsuarioID = data["usuarioid"]
         BazarID = data["bazarid"]
