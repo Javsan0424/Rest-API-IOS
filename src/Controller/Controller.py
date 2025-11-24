@@ -10,7 +10,7 @@ class Controller:
         self.supabase = supabase
     
     #Falta agregar la autenticación
-    def get_usuario(self, email, contraseña):
+    async def get_usuario(self, email, contraseña):
         response = self.supabase.table("usuario").select("*").eq("email", email).eq("contraseña", contraseña).execute()
         
         if response.data:

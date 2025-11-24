@@ -1,11 +1,9 @@
-from fastapi import Request, Response
+from fastapi import Request, Response, HTTPException
 from src.Controller.Controller import Controller
 
 class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
-    
-    from fastapi import HTTPException # Asumiendo FastAPI o similar
 
     async def usuarioHandler(self, request: Request, response: Response):
         try:
