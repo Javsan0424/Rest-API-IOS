@@ -38,7 +38,7 @@ class CrearSolicitudBody(BaseModel):
 @router.post("/usuario")
 async def usuario_route(body: LoginBody, response: Response):
     # body ya viene validado con .email y .contraseña
-    return await handler.usuarioHandler(body.dict(), response)
+    return await handler.usuarioHandler(body.model_dump(), response)
 
 @router.put("/crearusuario")
 async def crearusuario_route(request: Request, response: Response):
