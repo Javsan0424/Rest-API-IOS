@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 #Rutas
-@router.post("/usuario")
+@router.get("/usuario")
 async def usuario_route(request: Request, response: Response):
     return await handler.usuarioHandler(request, response)
 

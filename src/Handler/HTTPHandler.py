@@ -5,11 +5,27 @@ class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
     
+    from fastapi import HTTPException # Asumiendo FastAPI o similar
+
     async def usuarioHandler(self, request: Request, response: Response):
-        data = await request.json()
-        email = data["email"]
-        password = data["contraseña"]
-        return self.controller.get_usuario(email, password)
+        try:
+            data = await request.json()
+            email = data.get("email")
+            password = data.get("contraseña")
+
+            if not email or not password:
+                response.status_code = 400
+                return {"success": False, "message": "Faltan datos"}
+
+            result = await self.controller.get_usuario(email, password)
+            
+            if not result["success"]:
+                response.status_code = 401 
+            return result
+
+        except Exception as e:
+            response.status_code = 500
+            return {"success": False, "message": str(e)}
     
     async def crearUsuario(self, request: Request, response: Response):
         try:
@@ -63,3 +79,4 @@ class HTTPHandler:
     
     def SolicitudesAceptadasHandler(self, request: Request, response: Response):
         return self.controller.solicitudes_aceptadas()
+    
