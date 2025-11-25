@@ -1,11 +1,12 @@
 from fastapi import Request, Response
 from src.Controller.Controller import Controller
+from model import Usuario, CrearUsuario, Historial,CambiarEstado
 
 class HTTPHandler:
     def __init__(self):
         self.controller = Controller() 
     
-    def usuarioHandler(self, usuario, response: Response):
+    def usuarioHandler(self, usuario: Usuario, response: Response):
         try:            
             result = self.controller.get_usuario(usuario.email, usuario.password) 
             if result:
@@ -30,13 +31,9 @@ class HTTPHandler:
                 "message": f"Internal server error: {str(e)}"
             }
     
-    async def crearUsuario(self, request: Request, response: Response):
+    def crearUsuario(self, crearUsuario: CrearUsuario, response: Response):
         try:
-            data = await request.json()
-            nombre = data["nombre"]
-            email = data["email"]
-            contraseña = data["contraseña"]
-            return self.controller.crear_usuario(nombre,email,contraseña)
+            return self.controller.crear_usuario(crearUsuario.nombre, crearUsuario.email, crearUsuario.password)
         
         except Exception as e:
             print(f"Debug: Exception occured: {str(e)}")
@@ -48,25 +45,17 @@ class HTTPHandler:
     def bazarHandler(self, categorias: str, response: Response):
         return self.controller.get_bazar(categorias)
     
-    async def solicitudHandler(self, request: Request, response: Response):
+    async def solicitudHandler(self, crearUsuario: CrearUsuario, response: Response):
         try:
-            data = await request.json()
-            Lista_fotos = data["Lista_fotos"]
-            UsuarioID = data["usuarioid"]
-            BazarID = data["bazarid"]
-            descripcion = data["descripcion"]
-            categoriaID = data["categoria"]
-            return self.controller.crear_solicitud(Lista_fotos, UsuarioID, BazarID, descripcion, categoriaID)
+            return self.controller.crear_solicitud(crearUsuario.fotos, crearUsuario.usuarioid, crearUsuario.bazarid, crearUsuario.descripcion, crearUsuario.categoria)
         
         except Exception as e:
             print(f"Debug: Exception occured: {str(e)}")
             response.status_code = 500
     
-    async def historialHandler(self, request: Request, response: Response):
+    def historialHandler(self, historial: Historial, response: Response):
         try: 
-            data = await request.json()
-            name = data["nombre"]
-            return self.controller.historial_donaciones(name)
+            return self.controller.historial_donaciones(historial.usuarioid)
         
         except Exception as e:
             print(f"Debug: Exception occured: {str(e)}")
@@ -75,13 +64,9 @@ class HTTPHandler:
     def pendientesHandler(self, request: Request, response: Response):
         return self.controller.solicitudes_pendientes()
     
-    async def estadoHandler(self, request: Request, response: Response):
-        try: 
-            data = await request.json()
-            folio = data["folio"]
-            decision = data["decicion"]
-            self.controller.cambiar_estado_solicitud(folio, decision)
-            return {"success": True}
+    def estadoHandler(self, cambiarEstado: CambiarEstado, response: Response):
+        try:
+            return self.controller.cambiar_estado_solicitud(cambiarEstado.folio, cambiarEstado.estado)
     
         except Exception as e:
             print(f"Debug: Exception occured: {str(e)}")
