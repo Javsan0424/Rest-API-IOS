@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Request, Response, APIRouter
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel          # 👈 NUEVO
 from src.Handler.HTTPHandler import HTTPHandler
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import asyncio
+
+print(">>> ESTE ES EL ARCHIVO QUE FASTAPI ESTÁ USANDO <<<")
+
 
 app = FastAPI()
 router = APIRouter()
@@ -20,25 +24,15 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-# 👇👇 MODELOS Pydantic PARA LOS BODIES 👇👇
-class LoginBody(BaseModel):
+class Usuario(BaseModel):
     email: str
-    contraseña: str
+    password: str
 
-class CrearSolicitudBody(BaseModel):
-    Lista_fotos: list[str]
-    usuarioid: int
-    bazarid: int
-    descripcion: str
-    categoria: int
-# ☝️ estos nombres deben coincidir con los que usa tu handler / Supabase
-
-# Rutas
-# ⛔ login no debe ser GET si quieres mandar JSON, cámbialo a POST
-@router.post("/usuario")
-async def usuario_route(request: Request, response: Response):
-    # body ya viene validado con .email y .contraseña
-    return await handler.usuarioHandler(request, response)
+usuario_dummy = Usuario(email = "silvanna@gmail.com", password="1234567")
+#Rutas
+@router.post("/usuario", status_code=201)
+def usuario_route(usuario: Usuario, response: Response):
+    return handler.usuarioHandler(usuario, response)
 
 @router.put("/crearusuario")
 async def crearusuario_route(request: Request, response: Response):
@@ -48,14 +42,13 @@ async def crearusuario_route(request: Request, response: Response):
 def categorias_route(request: Request, response: Response):
     return handler.categoriasHandler(request, response)
 
-@router.get("/bazar")
+@router.get("/bazar" )
 def bazar_route(categorias: str, response: Response):
     return handler.bazarHandler(categorias, response)
 
 @router.post("/solicitud")
-async def solicitud_route(body: CrearSolicitudBody, response: Response):
-    # body.dict() le pasa un dict limpio a tu handler
-    return await handler.solicitudHandler(body.dict(), response)
+async def solicitud_route(request: Request, response: Response):
+    return await handler.solicitudHandler(request, response)
 
 @router.post("/historial")
 async def historial_route(request: Request, response: Response):
@@ -77,4 +70,4 @@ app.include_router(router)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello "}

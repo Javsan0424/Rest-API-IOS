@@ -1,4 +1,6 @@
 from supabase import create_client, Client
+from fastapi import HTTPException
+import logging
 
 url = "https://ivupohirgrfpskqxhtfd.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2dXBvaGlyZ3JmcHNrcXhodGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MDk3MTIsImV4cCI6MjA3NzE4NTcxMn0._E2nHBvPkbThcxZLh-WqJJlsJYkMWa7n1tDfnppO3WM"
@@ -10,26 +12,18 @@ class Controller:
         self.supabase = supabase
     
     #Falta agregar la autenticación
-    async def get_usuario(self, email, contraseña):
-        response = self.supabase.table("usuario").select("*").eq("email", email).eq("contraseña", contraseña).execute()
-        
-        if response.data:
-            user = response.data[0]  
+    def get_usuario(self, email, password):
+        try:
+            response = self.supabase.table("usuario").select("id, nombre, email, rol").eq("email", email).eq("password", password).execute()
             
-            return {
-                "success": True,
-                "usuario": {
-                    "id": user["id"],
-                    "nombre": user["nombre"],
-                    "email": user["email"],
-                    "rol": user["rol"]
-                }
-            }
-        else:
-            return {
-                "success": False,
-                "message": "Usuario o contraseña incorrectos"
-            }
+            if response.data and len(response.data) > 0:
+                return response.data[0]
+            else:
+                return None
+                
+        except Exception as e:
+            logging.error(f"Database error: {str(e)}")
+            return None
         
     def crear_usuario(self, nombre,email,contraseña, rol = "cliente"):
         self.supabase.table("usuario").insert({"nombre":nombre,"email":email,"contraseña":contraseña, "rol":rol}).execute()
