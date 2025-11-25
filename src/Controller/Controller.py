@@ -56,11 +56,11 @@ class Controller:
         return {"folio": folio, "status": "created"}
     
     def historial_donaciones(self, usuarioid):
-        response = self.supabase.table("donaciones").select("*").eq("usuarioid", usuarioid).execute()
+        response = self.supabase.rpc("get_historial_solicitudes",{"usuarioid": usuarioid}).select("*").execute()
         return response.data
     
     def solicitudes_pendientes(self):
-        response = self.supabase.table("donaciones").select("*").eq("estado", "En proceso").execute()
+        response = self.supabase.rpc("get_solicitudes_pendientes").select("*").execute()
         return response.data
     
     def cambiar_estado_solicitud(self, folio, estado):
@@ -68,5 +68,5 @@ class Controller:
         return {"status": "updated"}
 
     def solicitudes_aceptadas(self):
-        response = self.supabase.table("donaciones").select("*").eq("estado","Aceptado").execute()
+        response = self.supabase.rpc("get_solicitudes_aceptadas").select("*").execute()
         return response.data
