@@ -43,8 +43,8 @@ def bazar_route(categorias: str, response: Response):
     return handler.bazarHandler(categorias, response)
 
 @router.post("/solicitud", status_code=201)
-async def solicitud_route(crearSolicitud: CrearSolicitud, response: Response):
-    return await handler.solicitudHandler(crearSolicitud, response)
+def solicitud_route(crearSolicitud: CrearSolicitud, response: Response):
+    return handler.solicitudHandler(crearSolicitud, response)
 
 @router.post("/historial", status_code=201)
 def historial_route(historial: Historial, response: Response):
