@@ -4,7 +4,7 @@ uvicorn
 pydantic
 pwdlib[argon2]
 datetime
-model
 hashing
 datetime
 typing
+jwt

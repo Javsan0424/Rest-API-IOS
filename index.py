@@ -11,7 +11,6 @@ import jwt
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from model import Historial, Token
-import pydantic
 import src.Security
 
 app = FastAPI()
