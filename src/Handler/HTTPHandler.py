@@ -65,7 +65,7 @@ class HTTPHandler:
     
     def historialHandler(self, historial: Historial, response: Response):
         try: 
-            return self.controller.historial_donaciones(historial.usuarioid)
+            return self.controller.historial_donaciones(historial)
         except Exception as e:
             print(f"Debug: Exception occured: {str(e)}")
             response.status_code = 500

@@ -1,15 +1,23 @@
 from fastapi import FastAPI, Request, Response, APIRouter
+from fastapi.security import OAuth2PasswordRequestForm
 from src.Handler.HTTPHandler import HTTPHandler
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from model import Usuario, CrearUsuario, CrearSolicitud, Historial, CambiarEstado
+from model import Usuario, CrearUsuario, CrearSolicitud, Historial, CambiarEstado, Token, TokenData, Autenticate
 
-print(">>> ESTE ES EL ARCHIVO QUE FASTAPI ESTÁ USANDO <<<")
+from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
+import jwt
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from model import Historial, Token
+import pydantic
+import src.Security
 
 app = FastAPI()
 router = APIRouter()
 handler = HTTPHandler()
+hash = src.Security.Hash()
 
 origins = [
     "https://javsan0424.github.io/Rest-API-IOS",
@@ -43,24 +51,34 @@ def bazar_route(categorias: str, response: Response):
     return handler.bazarHandler(categorias, response)
 
 @router.post("/solicitud", status_code=201)
-def solicitud_route(crearSolicitud: CrearSolicitud, response: Response):
+async def solicitud_route(crearSolicitud: CrearSolicitud, response: Response):
+    if not await hash.get_current_user(crearSolicitud.token, crearSolicitud.nombre):
+        raise HTTPException(status_code=401, detail="Invalid credentials")   
     return handler.solicitudHandler(crearSolicitud, response)
 
 @router.post("/historial", status_code=201)
-def historial_route(historial: Historial, response: Response):
-    return  handler.historialHandler(historial, response)
+async def historial_route(historial: Historial, response: Response):
+    if not await hash.get_current_user(historial.token, historial.nombre):
+        raise HTTPException(status_code=401, detail="Invalid credentials")   
+    return handler.historialHandler(historial, response)
 
-@router.get("/pendientes", status_code=201)
-def pendientes_route(request: Request, response: Response):
-    return handler.pendientesHandler(request, response)
+@router.post("/pendientes", status_code=201)
+async def pendientes_route(autenticate: Autenticate, response: Response):
+    if not await hash.get_current_user(autenticate.token, autenticate.nombre):
+        raise HTTPException(status_code=401, detail="Invalid credentials") 
+    return handler.pendientesHandler(autenticate, response)
 
 @router.post("/estado", status_code=201)
 async def estado_route(cambiarEstado: CambiarEstado, response: Response):
+    if not await hash.get_current_user(cambiarEstado.token, cambiarEstado.nombre):
+        raise HTTPException(status_code=401, detail="Invalid credentials") 
     return handler.estadoHandler(cambiarEstado, response)
 
-@router.get("/aceptado", status_code=201)
-async def aceptado_route(request: Request, response: Response):
-    return handler.SolicitudesAceptadasHandler(request, response)
+@router.post("/aceptado", status_code=201)
+async def aceptado_route(autenticate: Autenticate, response: Response):
+    if not await hash.get_current_user(autenticate.token, autenticate.nombre):
+        raise HTTPException(status_code=401, detail="Invalid credentials") 
+    return handler.SolicitudesAceptadasHandler(autenticate, response)
 
 app.include_router(router)
 
