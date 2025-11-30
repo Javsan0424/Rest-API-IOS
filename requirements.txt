@@ -5,4 +5,3 @@ pydantic
 pwdlib[argon2]
 datetime
 typing
-jwt
