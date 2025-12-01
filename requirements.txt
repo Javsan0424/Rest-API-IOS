@@ -5,5 +5,4 @@ pydantic
 pwdlib[argon2]
 datetime
 typing
-jwt
 PyJWT==2.10.1
