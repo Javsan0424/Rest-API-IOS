@@ -49,5 +49,6 @@ class CambiarEstado(BaseModel):
 
 #Para pendientes y aceptados
 class Autenticate(BaseModel):
+    usuarioid: int
     token: Token
     nombre: str

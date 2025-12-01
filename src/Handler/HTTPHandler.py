@@ -1,6 +1,6 @@
 from fastapi import Request, Response
 from src.Controller.Controller import Controller
-from model import Usuario, CrearUsuario, CrearSolicitud, Historial, CambiarEstado
+from model import Usuario, CrearUsuario, CrearSolicitud, Historial, CambiarEstado, Autenticate
 
 class HTTPHandler:
     def __init__(self):
@@ -71,8 +71,8 @@ class HTTPHandler:
             response.status_code = 500
             return {"success": False, "error": str(e)}
     
-    def pendientesHandler(self, request: Request, response: Response):
-        return self.controller.solicitudes_pendientes()
+    def pendientesHandler(self, autenticate: Autenticate, response: Response):
+        return self.controller.solicitudes_pendientes(autenticate)
     
     def estadoHandler(self, cambiarEstado: CambiarEstado, response: Response):
         try:
@@ -85,5 +85,5 @@ class HTTPHandler:
             response.status_code = 500
             return {"success": False, "error": str(e)}
             
-    def SolicitudesAceptadasHandler(self, request: Request, response: Response):
-        return self.controller.solicitudes_aceptadas()
+    def SolicitudesAceptadasHandler(self, autenticate: Autenticate, response: Response):
+        return self.controller.solicitudes_aceptadas(autenticate)

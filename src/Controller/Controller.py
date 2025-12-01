@@ -4,7 +4,7 @@ from src.Security import Hash
 import logging
 
 from datetime import timedelta
-from model import Token, Historial
+from model import Token, Historial, Autenticate
 
 
 #Supabase key
@@ -80,16 +80,16 @@ class Controller:
         response = self.supabase.rpc("get_historial_solicitudes",{"user_id": historial.usuarioid}).select("*").execute()
         return response.data
     
-    def solicitudes_pendientes(self):
-        response = self.supabase.rpc("get_solicitudes_pendientes").select("*").execute()
+    def solicitudes_pendientes(self, autenticate: Autenticate):
+        response = self.supabase.rpc("get_solicitudes_pendientes", {"p_usuario_id": autenticate.usuarioid}).select("*").execute()
         return response.data
     
     def cambiar_estado_solicitud(self, folio, estado):
         self.supabase.table("donaciones").update({"estado": estado}).eq("folio", folio).execute()
         return {"status": "updated"}
 
-    def solicitudes_aceptadas(self):
-        response = self.supabase.rpc("get_solicitudes_aceptadas").select("*").execute()
+    def solicitudes_aceptadas(self, autenticate: Autenticate):
+        response = self.supabase.rpc("get_solicitudes_aceptadas", {"p_usuario_id": autenticate.usuarioid}).select("*").execute()
         return response.data
 
 
