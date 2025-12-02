@@ -82,6 +82,7 @@ class Controller:
     
     def solicitudes_pendientes(self, autenticate: Autenticate):
         response = self.supabase.rpc("get_solicitudes_pendientes", {"p_usuario_id": autenticate.usuarioid}).select("*").execute()
+        print("DEBUG pendientes:", response.data)
         return response.data
     
     def cambiar_estado_solicitud(self, folio, estado):
