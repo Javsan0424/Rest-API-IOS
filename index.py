@@ -31,7 +31,6 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
-
 #Rutas
 @router.post("/usuario", status_code=201)
 def usuario_route(usuario: Usuario, response: Response):
@@ -78,7 +77,7 @@ async def aceptado_route(autenticate: Autenticate, response: Response):
     if not await hash.get_current_user(autenticate.token, autenticate.nombre):
         raise HTTPException(status_code=401, detail="Invalid credentials") 
     return handler.SolicitudesAceptadasHandler(autenticate, response)
-
+ 
 app.include_router(router)
 
 @app.get("/")
